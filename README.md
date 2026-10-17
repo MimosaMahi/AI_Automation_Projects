@@ -1,9 +1,10 @@
 ﻿# Basic Automation Project
 
- Details of projects--
+Details of projects--
 
 
-** #Project 1 (Medical Chatbot)**
+
+#Project 1 (Medical Chatbot)
 
 Scenerio: Built a medical chatbot for patients. 
 
