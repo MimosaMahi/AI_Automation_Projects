@@ -2,6 +2,7 @@
 
  Details of projects--
 
+
 ** #Project 1 (Medical Chatbot)**
 
 Scenerio: Built a medical chatbot for patients. 
