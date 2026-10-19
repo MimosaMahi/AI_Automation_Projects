@@ -21,3 +21,13 @@ Tool: www.make.com
 Function: Send confirmation mail for filling up meeting form. 
 
 
+Project 3 (Weather Agent using API Call)
+========================================
+Scenario: Build a weather agent for users.
+
+URL: https://mahimimosa2.app.n8n.cloud/webhook/d1e6aa49-4d14-48af-a020-03d0b05af53e/chat
+
+Tool: n8n, weatherapi
+
+
+
