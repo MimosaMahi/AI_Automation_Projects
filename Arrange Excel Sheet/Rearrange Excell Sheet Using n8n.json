@@ -1,0 +1,409 @@
+{
+  "name": "Rearrange Excell Sheet Using n8n",
+  "nodes": [
+    {
+      "parameters": {
+        "formTitle": "Upload Customer File",
+        "formFields": {
+          "values": [
+            {
+              "fieldLabel": "Data",
+              "fieldType": "file"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.formTrigger",
+      "typeVersion": 2.6,
+      "position": [
+        0,
+        -192
+      ],
+      "id": "4d9606c4-090c-4686-886c-d4e493842dd2",
+      "name": "On form submission",
+      "webhookId": "a9bc65cb-5a06-4374-bac7-bf7c2659b440"
+    },
+    {
+      "parameters": {
+        "operation": "xlsx",
+        "binaryPropertyName": "Data",
+        "options": {
+          "readAsString": true
+        }
+      },
+      "type": "n8n-nodes-base.extractFromFile",
+      "typeVersion": 1.2,
+      "position": [
+        224,
+        -192
+      ],
+      "id": "fc0df94a-6eec-4569-9cde-cad635f9acf8",
+      "name": "Extract from File"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 4
+          },
+          "conditions": [
+            {
+              "id": "78d30f6a-e8b2-4b73-8ba2-6f9151934b98",
+              "leftValue": "={{ $json.Address }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "exists",
+                "singleValue": true
+              }
+            },
+            {
+              "id": "89d8e599-f87b-4c3a-9a5a-3a209b146ce0",
+              "leftValue": "={{ $json['Full Name'] }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "exists",
+                "singleValue": true
+              }
+            },
+            {
+              "id": "3d62ca0c-faef-4117-b58e-549725c5eb04",
+              "leftValue": "={{ $json['Email Address'] }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "exists",
+                "singleValue": true
+              }
+            },
+            {
+              "id": "76dc55f8-46f2-4d3f-8b7c-4fe28b84ecf2",
+              "leftValue": "={{ $json['Phone Number'] }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "exists",
+                "singleValue": true
+              }
+            },
+            {
+              "id": "4c778bee-3e88-4a17-a8aa-77a951380a8a",
+              "leftValue": "={{ $json.Date }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "exists",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "or"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.filter",
+      "typeVersion": 2.4,
+      "position": [
+        448,
+        -192
+      ],
+      "id": "794fb8f4-5988-4fd1-a268-d763d9db3266",
+      "name": "remove empty cell"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "2c5c413e-6f35-4f27-90ce-88b7f99025d2",
+              "name": "Full Name",
+              "value": "={{ $json['Full Name'].toLowerCase().split(\" \").filter(Boolean).map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(\" \") }}",
+              "type": "string"
+            },
+            {
+              "id": "ead2dec7-8209-4f32-81fb-4e0c047de25d",
+              "name": "Address",
+              "value": "={{ $json.Address.toLowerCase().split(\" \").filter(Boolean).map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(\" \") }}",
+              "type": "string"
+            },
+            {
+              "id": "2a274b60-9e86-49cf-9c26-ee5134a1d020",
+              "name": "City",
+              "value": "={{ $json.City.toLowerCase().split(\" \").filter(Boolean).map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(\" \") }}",
+              "type": "string"
+            }
+          ]
+        },
+        "includeOtherFields": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.5,
+      "position": [
+        672,
+        -192
+      ],
+      "id": "f49e91da-d653-4d55-9c54-1f27b422a7f2",
+      "name": "Check space & capatialize"
+    },
+    {
+      "parameters": {
+        "operation": "xlsx",
+        "options": {
+          "fileName": "clean_customers"
+        }
+      },
+      "type": "n8n-nodes-base.convertToFile",
+      "typeVersion": 1.2,
+      "position": [
+        2016,
+        -192
+      ],
+      "id": "5f9105cd-c355-448e-855e-b486f3731902",
+      "name": "updated file"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 4
+          },
+          "conditions": [
+            {
+              "id": "f1635ab9-95f3-4ed9-8f28-6d3d2c175e12",
+              "leftValue": "={{ $json['Email Address'] }}",
+              "rightValue": "^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$",
+              "operator": {
+                "type": "string",
+                "operation": "regex"
+              }
+            },
+            {
+              "id": "2a03d428-9ba5-4847-8c05-7d2329f55495",
+              "leftValue": "={{ $json['Phone Number'] }}",
+              "rightValue": "^01[0-9]{9}$",
+              "operator": {
+                "type": "string",
+                "operation": "regex"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "looseTypeValidation": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.filter",
+      "typeVersion": 2.4,
+      "position": [
+        896,
+        -192
+      ],
+      "id": "aca741af-a64b-4df9-8659-854e6626965b",
+      "name": "invalid email,number"
+    },
+    {
+      "parameters": {
+        "jsCode": "const items = $input.all();\nreturn items.map((item, i) => {\n  const j = item.json;\n  return { json: {\n    'Customer ID': 'CUST-' + String(i + 1).padStart(4, '0'),\n    'Full Name': j['Full Name'],\n    'Email Address': j['Email Address'],\n    'Phone Number': j['Phone Number'],\n    'Address': j['Address'],\n    ...( 'City' in j ? { 'City': j['City'] } : {} ),\n    ...( 'Date' in j ? { 'Date': j['Date'] } : {} ),\n  }};\n});"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1792,
+        -192
+      ],
+      "id": "fe0e1f38-7265-415d-8248-6cbb1d785e64",
+      "name": "customer id"
+    },
+    {
+      "parameters": {
+        "jsCode": "for (const item of $input.all()) {\n    if (item.json.Date) {\n        let d = item.json.Date;\n        let parsed = new Date(d.includes('/') ? d.split('/').reverse().join('-') : d);\n        if (!isNaN(parsed.getTime())) {\n            item.json.Date = parsed.toISOString().split('T')[0];\n        }\n    }\n}\nreturn $input.all();"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1120,
+        -192
+      ],
+      "id": "18eef27e-d721-4e0b-b81a-79a3e008af68",
+      "name": "invalid date"
+    },
+    {
+      "parameters": {
+        "jsCode": "// ---- node names exactly as on your canvas ----\nconst N_IMPORT   = 'Extract from File';\nconst N_EMPTY    = 'remove empty cell';\nconst N_CLEAN    = 'Check space & capatialize';\nconst N_VALID    = 'invalid email,number';\nconst N_DATE     = 'invalid date';\nconst N_DUP_MAIL = 'duplicate email';\nconst N_DUP_NUM  = 'duplicate number';\nconst N_FINAL    = 'customer id';\n\nconst count = name => $(name).all().length;\n\nconst imported     = count(N_IMPORT);\nconst afterEmpty   = count(N_EMPTY);\nconst afterValid   = count(N_VALID);\nconst afterDate    = count(N_DATE);\nconst afterDupMail = count(N_DUP_MAIL);\nconst afterDupNum  = count(N_DUP_NUM);\nconst finalCount   = count(N_FINAL);\n\n// Count invalid emails and phones from the cleaned rows\nconst emailRe = /^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/;\nconst phoneRe = /^01\\d{9}$/;\n\nlet badEmail = 0, badPhone = 0;\nfor (const it of $(N_CLEAN).all()) {\n  const j = it.json;\n  const email = String(j['Email Address'] ?? j['Email'] ?? '').trim();\n  const phone = String(j['Phone Number'] ?? j['Phone'] ?? '').replace(/[\\s\\-]/g, '');\n  if (!emailRe.test(email)) badEmail++;\n  else if (!phoneRe.test(phone)) badPhone++;\n}\n\nconst emptyRemoved = imported - afterEmpty;\nconst dups = (afterDate - afterDupMail) + (afterDupMail - afterDupNum);\n\nconst rows = [\n  { Metric: 'Total Rows Imported',          Count: imported },\n  { Metric: 'Rows Removed (Empty/Invalid)', Count: emptyRemoved + badEmail + badPhone },\n  { Metric: 'Duplicate Rows Removed',       Count: dups },\n  { Metric: 'Invalid Emails Removed',       Count: badEmail },\n  { Metric: 'Invalid Phones Removed',       Count: badPhone },\n  { Metric: 'Final Row Count',              Count: finalCount },\n];\n\nreturn rows.map(r => ({ json: r }));"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2240,
+        -192
+      ],
+      "id": "33ee688e-f8e0-410c-88e8-71ed3c408d2a",
+      "name": "summery"
+    },
+    {
+      "parameters": {
+        "compare": "selectedFields",
+        "fieldsToCompare": "=['Email Address']",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.removeDuplicates",
+      "typeVersion": 2,
+      "position": [
+        1344,
+        -192
+      ],
+      "id": "635a25c4-9310-4654-928e-0e7c4bdd817a",
+      "name": "duplicate email"
+    },
+    {
+      "parameters": {
+        "compare": "selectedFields",
+        "fieldsToCompare": "['Phone Number']",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.removeDuplicates",
+      "typeVersion": 2,
+      "position": [
+        1568,
+        -192
+      ],
+      "id": "1868a75b-a9eb-4fc6-92bd-d2b2d65db831",
+      "name": "duplicate number"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "On form submission": {
+      "main": [
+        [
+          {
+            "node": "Extract from File",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract from File": {
+      "main": [
+        [
+          {
+            "node": "remove empty cell",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "remove empty cell": {
+      "main": [
+        [
+          {
+            "node": "Check space & capatialize",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check space & capatialize": {
+      "main": [
+        [
+          {
+            "node": "invalid email,number",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "updated file": {
+      "main": [
+        [
+          {
+            "node": "summery",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "invalid email,number": {
+      "main": [
+        [
+          {
+            "node": "invalid date",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "customer id": {
+      "main": [
+        [
+          {
+            "node": "updated file",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "invalid date": {
+      "main": [
+        [
+          {
+            "node": "duplicate email",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "duplicate email": {
+      "main": [
+        [
+          {
+            "node": "duplicate number",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "duplicate number": {
+      "main": [
+        [
+          {
+            "node": "customer id",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "f05dd492-84ac-4815-b7a9-f6662a4f0b63",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "aea143d47d60fbe71e4b885bf1581633dce4d0943ec931f4c0a65602bce19030"
+  },
+  "nodeGroups": [],
+  "id": "pcxtdyZAVO71ttc4",
+  "tags": []
+}
